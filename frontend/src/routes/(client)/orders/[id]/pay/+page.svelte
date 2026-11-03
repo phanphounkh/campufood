@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reveal } from '#lib/actions/reveal.ts';
 	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/state';
 	import QRCode from 'qrcode';
@@ -144,7 +145,7 @@
 
 <div class="container-page max-w-xl py-8">
 	{#if view === 'missing' || !order}
-		<div class="card">
+		<div class="card" use:reveal={{ from: 'zoom' }}>
 			<EmptyState icon={SearchX} title={t('orders.notFound')} text={t('orders.notFoundText')}>
 				<a href="/orders" class="btn btn-primary">{t('nav.orders')}</a>
 			</EmptyState>
@@ -168,7 +169,11 @@
 		</div>
 
 		{#if view === 'paid'}
-			<section class="card mt-5 overflow-hidden text-center" data-testid="payment-success">
+			<section
+				class="card mt-5 overflow-hidden text-center"
+				data-testid="payment-success"
+				use:reveal={{ from: 'zoom' }}
+			>
 				<div class="bg-gradient-to-b from-green-50 to-white px-6 pt-10 pb-6">
 					<div
 						class="mx-auto grid size-20 animate-pop place-items-center rounded-full bg-success text-white shadow-[0_12px_30px_-10px_rgb(22_163_74/0.7)]"
@@ -212,7 +217,7 @@
 				</div>
 			</section>
 		{:else if view === 'expired' || view === 'cancelled'}
-			<section class="card mt-5 p-8 text-center">
+			<section class="card mt-5 p-8 text-center" use:reveal={{ from: 'zoom' }}>
 				<div
 					class="mx-auto grid size-16 place-items-center rounded-2xl bg-slate-100 text-slate-500"
 				>
@@ -225,7 +230,7 @@
 				<a href="/menu" class="btn btn-primary mt-6">{t('pay.orderAgain')}</a>
 			</section>
 		{:else if payment}
-			<section class="card mt-5 p-5 sm:p-6">
+			<section class="card mt-5 p-5 sm:p-6" use:reveal>
 				<div class="rounded-2xl bg-brand-50 px-5 py-4 text-center">
 					<p class="text-sm font-medium text-ink-muted">
 						{t('pay.order')}
@@ -327,7 +332,7 @@
 				</p>
 			</section>
 
-			<details class="card mt-4 p-5">
+			<details class="card mt-4 p-5" use:reveal>
 				<summary class="cursor-pointer font-bold"
 					>{t('checkout.summary')} · {order.items.length}</summary
 				>
@@ -346,8 +351,10 @@
 			</details>
 
 			<div class="mt-4 text-center">
-				<button type="button" class="btn btn-ghost text-danger-ink" onclick={() => (askCancel = true)}
-					>{t('pay.cancelOrder')}</button
+				<button
+					type="button"
+					class="btn btn-ghost text-danger-ink"
+					onclick={() => (askCancel = true)}>{t('pay.cancelOrder')}</button
 				>
 			</div>
 		{/if}

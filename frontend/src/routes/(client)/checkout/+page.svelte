@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reveal } from '#lib/actions/reveal.ts';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -155,7 +156,7 @@
 	<p class="mt-1 text-ink-muted">{t('checkout.subtitle')}</p>
 
 	{#if cart.lines.length === 0 && !submitting}
-		<div class="card mt-8">
+		<div class="card mt-8" use:reveal={{ from: 'zoom' }}>
 			<EmptyState icon={ShoppingBag} title={t('checkout.emptyCart')} text={t('cart.emptyHint')}>
 				<a href="/menu" class="btn btn-primary">{t('cart.browse')}</a>
 			</EmptyState>
@@ -171,7 +172,7 @@
 					</p>
 				{/if}
 
-				<section class="card p-5 sm:p-6">
+				<section class="card p-5 sm:p-6" use:reveal>
 					<div class="flex flex-wrap items-baseline justify-between gap-2">
 						<h2 class="text-lg font-bold">{t('checkout.details')}</h2>
 						<p class="text-sm text-ink-muted">
@@ -304,7 +305,7 @@
 					</div>
 				</section>
 
-				<section class="card p-5 sm:p-6">
+				<section class="card p-5 sm:p-6" use:reveal>
 					<h2 class="text-lg font-bold">{t('checkout.payment')}</h2>
 					<div
 						class="mt-4 flex items-start gap-4 rounded-2xl border-2 border-brand-600 bg-brand-50/60 p-4"
@@ -328,7 +329,7 @@
 				</section>
 			</div>
 
-			<aside>
+			<aside use:reveal={{ from: 'right' }}>
 				<div class="card sticky top-24 p-5 sm:p-6">
 					<h2 class="text-lg font-bold">{t('checkout.summary')}</h2>
 					<ul class="mt-2 divide-y divide-line">

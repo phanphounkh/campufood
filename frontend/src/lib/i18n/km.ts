@@ -43,6 +43,8 @@ export const km: Record<MessageKey, string> = {
 		'កុម្ម៉ង់អាហារដែលអ្នកចូលចិត្តតាមអនឡាញ បង់ប្រាក់យ៉ាងងាយស្រួល ហើយមកយកនៅអាហារដ្ឋាន។',
 	'home.orderNow': 'កុម្ម៉ង់ឥឡូវនេះ',
 	'home.howItWorks': 'របៀបប្រើប្រាស់',
+	'home.slideshow': 'មុខម្ហូបពិសេស',
+	'home.showSlide': 'បង្ហាញរូបភាពទី {n}៖ {name}',
 	'home.statMeals': 'មុខម្ហូប',
 	'home.statPickup': 'រយៈពេលរង់ចាំជាមធ្យម',
 	'home.statPrice': 'តម្លៃចាប់ពី',

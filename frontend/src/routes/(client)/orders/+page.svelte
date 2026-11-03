@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reveal } from '#lib/actions/reveal.ts';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import Receipt from '@lucide/svelte/icons/receipt';
@@ -51,14 +52,14 @@
 <svelte:head><title>{t('orders.title')} · CampusEats</title></svelte:head>
 
 <div class="container-page max-w-3xl py-8">
-	<h1 class="text-3xl font-extrabold tracking-tight">{t('orders.title')}</h1>
-	<p class="mt-1 text-ink-muted">{t('orders.subtitle')}</p>
+	<h1 class="text-3xl font-extrabold tracking-tight" use:reveal>{t('orders.title')}</h1>
+	<p class="mt-1 text-ink-muted" use:reveal>{t('orders.subtitle')}</p>
 
 	<div class="mt-6 space-y-3" data-testid="orders-list">
 		{#if loading}
 			{#each [1, 2, 3] as i (i)}<Skeleton class="h-24 w-full" />{/each}
 		{:else if orders.length === 0}
-			<div class="card">
+			<div class="card" use:reveal={{ from: 'zoom' }}>
 				<EmptyState icon={Receipt} title={t('orders.empty')} text={t('orders.emptyHint')}>
 					<a href="/menu" class="btn btn-primary">{t('cart.browse')}</a>
 				</EmptyState>
@@ -70,6 +71,7 @@
 						? `/orders/${order.id}/pay`
 						: `/orders/${order.id}`}
 					class="card flex items-center gap-4 p-4 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift sm:p-5"
+					use:reveal
 				>
 					<span
 						class="hidden size-12 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-600 sm:grid"

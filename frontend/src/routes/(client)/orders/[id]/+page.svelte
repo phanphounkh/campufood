@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reveal } from '#lib/actions/reveal.ts';
 	import { onDestroy, onMount } from 'svelte';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Check from '@lucide/svelte/icons/check';
@@ -70,13 +71,13 @@
 	<a href="/orders" class="btn btn-ghost -ml-3"><ArrowLeft class="size-4" />{t('nav.orders')}</a>
 
 	{#if !order}
-		<div class="card mt-4">
+		<div class="card mt-4" use:reveal={{ from: 'zoom' }}>
 			<EmptyState icon={SearchX} title={t('orders.notFound')} text={t('orders.notFoundText')}>
 				<a href="/menu" class="btn btn-primary">{t('cart.browse')}</a>
 			</EmptyState>
 		</div>
 	{:else}
-		<header class="mt-3 flex flex-wrap items-start justify-between gap-4">
+		<header class="mt-3 flex flex-wrap items-start justify-between gap-4" use:reveal>
 			<div>
 				<h1 class="text-3xl font-extrabold tracking-tight" data-testid="order-number">
 					{t('orders.number', { number: order.order_number })}
@@ -97,6 +98,7 @@
 
 		{#if order.status === 'ready'}
 			<p
+				use:reveal={{ from: 'zoom' }}
 				class="mt-5 flex items-center gap-3 rounded-2xl bg-emerald-50 p-4 font-semibold text-emerald-900"
 				role="status"
 			>
@@ -104,7 +106,7 @@
 			</p>
 		{/if}
 
-		<section class="card mt-6 p-5 sm:p-6" aria-label={t('orders.status')}>
+		<section class="card mt-6 p-5 sm:p-6" aria-label={t('orders.status')} use:reveal>
 			{#if order.status === 'cancelled'}
 				<div class="flex items-start gap-4">
 					<span
@@ -189,7 +191,7 @@
 			{/if}
 		</section>
 
-		<section class="card mt-5 p-5 sm:p-6">
+		<section class="card mt-5 p-5 sm:p-6" use:reveal>
 			<h2 class="font-bold">{t('orders.items')}</h2>
 			<ul class="mt-3 divide-y divide-line">
 				{#each order.items as item (item.id)}

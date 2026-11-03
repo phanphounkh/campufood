@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reveal } from '#lib/actions/reveal.ts';
 	import { onMount, untrack } from 'svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
@@ -67,7 +68,7 @@
 </svelte:head>
 
 <div class="border-b border-line bg-gradient-to-b from-brand-50/70 to-white">
-	<div class="container-page pt-8 pb-6">
+	<div class="container-page pt-8 pb-6" use:reveal>
 		<h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">{t('menu.title')}</h1>
 		<p class="mt-2 flex items-center gap-2 text-ink-muted">
 			<MousePointerClick class="size-4 text-brand-500" />
@@ -130,7 +131,7 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="card">
+			<div class="card" use:reveal={{ from: 'zoom' }}>
 				<EmptyState icon={SearchX} title={t('menu.empty')} text={t('menu.emptyHint')}>
 					<button type="button" class="btn btn-soft" onclick={resetFilters}
 						>{t('menu.clearFilters')}</button
@@ -140,7 +141,7 @@
 		{/if}
 	</section>
 
-	<aside class="hidden lg:block" lang={i18n.locale}>
+	<aside class="hidden lg:block" lang={i18n.locale} use:reveal={{ from: 'right' }}>
 		<div class="sticky top-24">
 			<CartPanel droppable class="max-h-[calc(100dvh-7.5rem)] min-h-80" />
 		</div>

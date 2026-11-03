@@ -183,3 +183,16 @@
 		@apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
 	}
 }
+
+/*
+	Scroll reveal (#lib/actions/reveal.ts). Unlayered so it beats any opacity utility while the
+	element waits off-screen; the attribute is removed the moment its animation starts.
+*/
+[data-reveal-pending] {
+	opacity: 0;
+}
+@media print {
+	[data-reveal-pending] {
+		opacity: 1;
+	}
+}

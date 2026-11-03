@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reveal } from '#lib/actions/reveal.ts';
 	import Phone from '@lucide/svelte/icons/phone';
 	import Mail from '@lucide/svelte/icons/mail';
 	import MapPin from '@lucide/svelte/icons/map-pin';
@@ -24,7 +25,7 @@
 
 <footer class="mt-24 bg-navy text-white/80">
 	<div class="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr_1fr]">
-		<div>
+		<div use:reveal>
 			<Logo variant="dark" subtitle={settings?.store_tagline} />
 			<p class="mt-4 max-w-xs text-sm leading-relaxed text-white/65">{t('footer.about')}</p>
 			{#if socials.length}
@@ -49,7 +50,7 @@
 			{/if}
 		</div>
 
-		<div>
+		<div use:reveal>
 			<h2 class="text-sm font-bold text-white">{t('footer.explore')}</h2>
 			<ul class="mt-4 space-y-2.5 text-sm">
 				<li><a class="hover:text-white" href="/menu">{t('nav.menu')}</a></li>
@@ -59,7 +60,7 @@
 			</ul>
 		</div>
 
-		<div>
+		<div use:reveal>
 			<h2 class="text-sm font-bold text-white">{t('footer.contact')}</h2>
 			<ul class="mt-4 space-y-3 text-sm">
 				{#if settings?.store_phone}
@@ -87,7 +88,7 @@
 			</ul>
 		</div>
 
-		<div>
+		<div use:reveal>
 			<h2 class="text-sm font-bold text-white">{t('footer.hours')}</h2>
 			<p class="mt-4 flex gap-2.5 text-sm">
 				<Clock class="mt-0.5 size-4 shrink-0 text-brand-300" />

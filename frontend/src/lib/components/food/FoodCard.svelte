@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reveal } from '#lib/actions/reveal.ts';
 	import Plus from '@lucide/svelte/icons/plus';
 	import GripVertical from '@lucide/svelte/icons/grip-vertical';
 	import Flame from '@lucide/svelte/icons/flame';
@@ -31,6 +32,7 @@
 		: 'border-line shadow-soft hover:-translate-y-1 hover:border-brand-200 hover:shadow-lift'}
 		{food.is_sold_out ? '' : 'cursor-grab active:cursor-grabbing'}"
 	use:draggableFood={{ food, disabled: food.is_sold_out, onDrop: (f) => addToCart(f) }}
+	use:reveal
 	data-testid="food-card"
 	data-food-id={food.id}
 >

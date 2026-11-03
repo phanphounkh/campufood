@@ -9,6 +9,8 @@ Processing: food photos were center-cropped to 4:3, resized to 800x600, stripped
 
 Files: `backend/seed_media/foods/<slug>.jpg` and `frontend/static/images/hero.jpg`.
 
+`frontend/static/images/cta-poster.jpg` (the home page call-to-action background) is a 1600x500 collage built from five of the photos below: beef-skewers, noodle-soup, fried-noodles, iced-milk-tea and mango-sticky-rice, each center-cropped to a portrait tile with 8px brand-purple gutters, JPEG quality 80.
+
 | Slug | Photographer | Source page | License | What it shows |
 |------|--------------|-------------|---------|---------------|
 | chicken-rice | Change C.C | https://www.pexels.com/photo/hainanese-chicken-rice-with-fresh-vegetables-30120279/ | Pexels License | Hainanese chicken rice (exact) |

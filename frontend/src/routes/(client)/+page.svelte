@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reveal } from '#lib/actions/reveal.ts';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import CirclePlay from '@lucide/svelte/icons/circle-play';
 	import ClipboardList from '@lucide/svelte/icons/clipboard-list';
@@ -11,6 +12,7 @@
 	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import FoodCard from '#lib/components/food/FoodCard.svelte';
 	import FoodDetailModal from '#lib/components/food/FoodDetailModal.svelte';
+	import RisingText from '#lib/components/ui/RisingText.svelte';
 	import FloatingCartButton from '#lib/components/cart/FloatingCartButton.svelte';
 	import type { Food } from '#lib/types/api.ts';
 	import { i18n, t } from '#lib/i18n/index.svelte.ts';
@@ -28,6 +30,35 @@
 	] as const;
 
 	const star = $derived(data.featured[0]);
+
+	// Hero letter animation: the emoji lands just after the last letter.
+	const TITLE_STAGGER = 35;
+	const title = $derived(t('home.title'));
+	const emojiDelay = $derived(Array.from(title).length * TITLE_STAGGER + 250);
+
+	// Hero slideshow: the campus photo, then featured dishes that have a picture.
+	const SLIDE_INTERVAL = 4500;
+	const slides = $derived([
+		{ src: '/images/hero.jpg', food: null as Food | null },
+		...data.featured
+			.filter((f) => f.image_url)
+			.slice(0, 4)
+			.map((f) => ({ src: f.image_url as string, food: f as Food | null }))
+	]);
+	let current = $state(0);
+	let paused = $state(false);
+	const active = $derived(current % slides.length);
+	// The floating card follows the dish on screen.
+	const cardFood = $derived(slides[active].food ?? star);
+
+	$effect(() => {
+		const count = slides.length;
+		const from = active;
+		if (count < 2 || paused || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		// Re-armed after every change, so a manual pick gets a full interval too.
+		const timer = setTimeout(() => (current = (from + 1) % count), SLIDE_INTERVAL);
+		return () => clearTimeout(timer);
+	});
 </script>
 
 <svelte:head>
@@ -55,9 +86,16 @@
 			</span>
 			<h1
 				class="mt-5 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl lg:text-6xl lg:leading-[1.05]"
+				aria-label={title}
 			>
-				{t('home.title')}
-				<span aria-hidden="true">🍱</span>
+				<RisingText text={title} delay={150} stagger={TITLE_STAGGER} />
+				{#key title}
+					<span
+						class="inline-block animate-fade-up"
+						style:animation-delay="{emojiDelay}ms"
+						aria-hidden="true">🍱</span
+					>
+				{/key}
 			</h1>
 			<p class="mt-5 max-w-lg text-lg text-ink-soft">{t('home.subtitle')}</p>
 			<div class="mt-8 flex flex-wrap gap-3">
@@ -90,6 +128,13 @@
 
 		<div
 			class="relative mx-auto w-full max-w-lg animate-fade-up [animation-delay:120ms] lg:max-w-none"
+			role="region"
+			aria-roledescription="carousel"
+			aria-label={t('home.slideshow')}
+			onmouseenter={() => (paused = true)}
+			onmouseleave={() => (paused = false)}
+			onfocusin={() => (paused = true)}
+			onfocusout={() => (paused = false)}
 		>
 			<div class="relative aspect-square">
 				<div
@@ -111,24 +156,41 @@
 						stroke-dasharray="4 10"
 					/>
 				</svg>
-				<img
-					src="/images/hero.jpg"
-					alt=""
-					class="absolute inset-[11%] size-[78%] rounded-full object-cover shadow-[0_40px_80px_-30px_rgb(23_22_56/0.55)]"
-					fetchpriority="high"
-				/>
-				{#if star}
+				<div
+					class="absolute inset-[11%] isolate overflow-hidden rounded-full bg-brand-100 shadow-[0_40px_80px_-30px_rgb(23_22_56/0.55)]"
+				>
+					{#each slides as slide, i (i)}
+						<img
+							src={slide.src}
+							alt=""
+							class="absolute inset-0 size-full object-cover transition-[opacity,transform] duration-[1200ms] ease-out {i ===
+							active
+								? 'scale-100 opacity-100'
+								: 'scale-110 opacity-0'}"
+							loading={i === 0 ? 'eager' : 'lazy'}
+							fetchpriority={i === 0 ? 'high' : undefined}
+							decoding="async"
+						/>
+					{/each}
+				</div>
+				{#if cardFood}
 					<div
 						class="absolute top-[8%] -left-2 flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 pr-4 shadow-lift backdrop-blur sm:left-0"
 					>
-						<img src={star.image_url} alt="" class="size-11 rounded-xl object-cover" />
-						<div>
-							<p class="text-sm font-bold" lang={i18n.locale}>{i18n.pick(star, 'name')}</p>
-							<p class="flex items-center gap-1 text-xs text-ink-muted">
-								<Star class="size-3 fill-amber-400 text-amber-400" />
-								4.9 · <span class="font-bold text-brand-600">{formatMoney(star.price)}</span>
-							</p>
-						</div>
+						{#key cardFood.id}
+							<img
+								src={cardFood.image_url}
+								alt=""
+								class="size-11 animate-fade-up rounded-xl object-cover"
+							/>
+							<div class="animate-fade-up">
+								<p class="text-sm font-bold" lang={i18n.locale}>{i18n.pick(cardFood, 'name')}</p>
+								<p class="flex items-center gap-1 text-xs text-ink-muted">
+									<Star class="size-3 fill-amber-400 text-amber-400" />
+									4.9 · <span class="font-bold text-brand-600">{formatMoney(cardFood.price)}</span>
+								</p>
+							</div>
+						{/key}
 					</div>
 				{/if}
 				<div
@@ -145,20 +207,42 @@
 					</div>
 				</div>
 			</div>
+			{#if slides.length > 1}
+				<div class="mt-3 flex justify-center gap-1">
+					{#each slides as slide, i (i)}
+						<button
+							type="button"
+							class="group grid h-6 place-items-center px-1"
+							aria-label={t('home.showSlide', {
+								n: i + 1,
+								name: slide.food ? i18n.pick(slide.food, 'name') : 'CampusEats'
+							})}
+							aria-current={i === active ? 'true' : undefined}
+							onclick={() => (current = i)}
+						>
+							<span
+								class="block h-2 rounded-full transition-all duration-300 {i === active
+									? 'w-6 bg-brand-600'
+									: 'w-2 bg-brand-200 group-hover:bg-brand-400'}"
+							></span>
+						</button>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	</div>
 </section>
 
 <!-- How it works -->
 <section id="how-it-works" class="container-page scroll-mt-24 py-16">
-	<div class="mx-auto max-w-2xl text-center">
+	<div class="mx-auto max-w-2xl text-center" use:reveal>
 		<h2 class="text-3xl font-extrabold tracking-tight">{t('home.stepsTitle')}</h2>
 		<p class="mt-3 text-ink-muted">{t('home.stepsSubtitle')}</p>
 	</div>
 	<ol class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 		{#each steps as step, i (step.title)}
 			{@const Icon = step.icon}
-			<li class="card relative p-6 transition hover:-translate-y-1 hover:shadow-lift">
+			<li class="card relative p-6 transition hover:-translate-y-1 hover:shadow-lift" use:reveal>
 				<span
 					class="absolute top-5 right-5 text-4xl font-extrabold text-brand-100"
 					aria-hidden="true">{i + 1}</span
@@ -175,7 +259,7 @@
 
 <!-- Featured -->
 <section class="container-page py-8">
-	<div class="flex flex-wrap items-end justify-between gap-4">
+	<div class="flex flex-wrap items-end justify-between gap-4" use:reveal>
 		<div>
 			<h2 class="text-3xl font-extrabold tracking-tight">{t('home.featuredTitle')}</h2>
 			<p class="mt-2 text-ink-muted">{t('home.featuredSubtitle')}</p>
@@ -195,14 +279,26 @@
 <!-- CTA -->
 <section class="container-page pt-12">
 	<div
-		class="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-12 text-center text-white sm:px-12"
+		class="relative isolate overflow-hidden rounded-[28px] bg-brand-700 px-6 py-12 text-center text-white sm:px-12"
+		use:reveal={{ from: 'zoom', duration: 900 }}
 	>
+		<!--
+			Poster: a strip of dishes, multiplied with brand purple. Multiply can never be lighter
+			than the purple itself, so the white text keeps AA contrast over any part of the photo.
+		-->
+		<img
+			src="/images/cta-poster.jpg"
+			alt=""
+			class="absolute inset-0 -z-10 size-full object-cover"
+			loading="lazy"
+			decoding="async"
+		/>
 		<div
-			class="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-white/10"
+			class="pointer-events-none absolute inset-0 -z-10 bg-brand-500 mix-blend-multiply"
 			aria-hidden="true"
 		></div>
 		<div
-			class="pointer-events-none absolute -bottom-32 -left-16 size-72 rounded-full bg-white/5"
+			class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgb(45_16_102/0.6),transparent_75%)]"
 			aria-hidden="true"
 		></div>
 		<h2 class="relative text-3xl font-extrabold">{t('home.ctaTitle')}</h2>

@@ -44,6 +44,8 @@ export const en = {
 		'Order your favorite meals online, pay easily, and pick up your food at the canteen.',
 	'home.orderNow': 'Order Now',
 	'home.howItWorks': 'How It Works',
+	'home.slideshow': 'Featured dishes',
+	'home.showSlide': 'Show slide {n}: {name}',
 	'home.statMeals': 'meals on the menu',
 	'home.statPickup': 'avg. pickup time',
 	'home.statPrice': 'meals from',
