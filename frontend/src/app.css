@@ -1,0 +1,185 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/noto-sans-khmer';
+
+@theme {
+	/* Brand: purple #6425D8 with a soft lavender #F3EEFF */
+	--color-brand-50: #f3eeff;
+	--color-brand-100: #e9deff;
+	--color-brand-200: #d5c0ff;
+	--color-brand-300: #b896fb;
+	--color-brand-400: #9563f0;
+	--color-brand-500: #7a3be6;
+	--color-brand-600: #6425d8;
+	--color-brand-700: #521cb5;
+	--color-brand-800: #421893;
+	--color-brand-900: #2d1066;
+
+	/* Text & surfaces */
+	--color-ink: #171638;
+	--color-ink-soft: #3f3d66;
+	--color-ink-muted: #5f5d80;
+	--color-line: #ebe7f5;
+	--color-canvas: #faf8ff;
+	--color-navy: #171638;
+	--color-navy-light: #232151;
+
+	/* Status */
+	--color-success: #16a34a;
+	--color-warning: #f59e0b;
+	--color-danger: #ef4444;
+	/* Darker variants for text and text-bearing fills: meet WCAG AA (4.5:1) on white. */
+	--color-success-ink: #15803d;
+	--color-danger-ink: #dc2626;
+
+	--font-sans:
+		'Plus Jakarta Sans Variable', 'Noto Sans Khmer Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-khmer: 'Noto Sans Khmer Variable', 'Plus Jakarta Sans Variable', sans-serif;
+
+	--radius-card: 18px;
+	--radius-btn: 12px;
+
+	--shadow-soft: 0 1px 2px rgb(23 22 56 / 0.04), 0 8px 24px -12px rgb(23 22 56 / 0.12);
+	--shadow-lift: 0 2px 4px rgb(23 22 56 / 0.05), 0 18px 40px -16px rgb(100 37 216 / 0.28);
+
+	--animate-pop: pop 360ms cubic-bezier(0.34, 1.56, 0.64, 1);
+	--animate-fade-up: fade-up 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	--animate-slide-in-right: slide-in-right 320ms cubic-bezier(0.22, 1, 0.36, 1);
+
+	@keyframes pop {
+		0% {
+			transform: scale(1);
+		}
+		45% {
+			transform: scale(1.22);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+	@keyframes fade-up {
+		from {
+			opacity: 0;
+			transform: translateY(14px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+	@keyframes slide-in-right {
+		from {
+			transform: translateX(100%);
+		}
+		to {
+			transform: none;
+		}
+	}
+}
+
+@layer base {
+	html {
+		-webkit-text-size-adjust: 100%;
+		scroll-behavior: smooth;
+	}
+	body {
+		@apply bg-white font-sans text-ink antialiased;
+		line-height: 1.55;
+	}
+	/* Khmer script has tall stacked vowels and subscripts: give it room so nothing clips. */
+	:lang(km) {
+		font-family: var(--font-khmer);
+		line-height: 1.75;
+	}
+	:lang(km) :is(h1, h2, h3, h4) {
+		line-height: 1.5;
+	}
+	:lang(km) :is(.leading-none, .leading-tight, .leading-snug) {
+		line-height: 1.6;
+	}
+	:lang(km) .line-clamp-2 {
+		line-height: 1.7;
+	}
+	::selection {
+		@apply bg-brand-200 text-ink;
+	}
+	:focus-visible {
+		@apply outline-2 outline-offset-2 outline-brand-600;
+	}
+	/* :is(input[...]) out-specifies @tailwindcss/forms' [type=...] rules but stays in the base
+	   layer, so utilities such as rounded-none or border-danger still win. */
+	:is(
+		input:not([type]),
+		input[type='text'],
+		input[type='email'],
+		input[type='password'],
+		input[type='tel'],
+		input[type='number'],
+		input[type='search'],
+		input[type='date'],
+		input[type='time'],
+		select,
+		textarea
+	) {
+		@apply rounded-xl border-line bg-white text-ink shadow-none transition placeholder:text-ink-muted/70 focus:border-brand-500 focus:ring-4 focus:ring-brand-100;
+	}
+	input[type='checkbox'] {
+		@apply rounded border-line text-brand-600 focus:ring-brand-200;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 1ms !important;
+			transition-duration: 1ms !important;
+			scroll-behavior: auto !important;
+		}
+	}
+}
+
+@layer components {
+	.btn {
+		@apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-btn)] px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition duration-200 select-none disabled:pointer-events-none disabled:opacity-50;
+	}
+	.btn-lg {
+		@apply px-6 py-3 text-base;
+	}
+	.btn-sm {
+		@apply rounded-lg px-3 py-1.5 text-xs;
+	}
+	.btn-primary {
+		@apply bg-brand-600 text-white shadow-[0_8px_20px_-8px_rgb(100_37_216/0.6)] hover:-translate-y-px hover:bg-brand-700 active:translate-y-0;
+	}
+	.btn-secondary {
+		@apply border border-line bg-white text-ink shadow-soft hover:border-brand-200 hover:bg-brand-50;
+	}
+	.btn-soft {
+		@apply bg-brand-50 text-brand-700 hover:bg-brand-100;
+	}
+	.btn-ghost {
+		@apply text-ink-soft hover:bg-brand-50 hover:text-brand-700;
+	}
+	.btn-danger {
+		@apply bg-danger-ink text-white hover:bg-red-700;
+	}
+	.icon-btn {
+		@apply inline-flex size-10 items-center justify-center rounded-xl text-ink-soft transition hover:bg-brand-50 hover:text-brand-700;
+	}
+	.card {
+		@apply rounded-[var(--radius-card)] border border-line bg-white shadow-soft;
+	}
+	.label {
+		@apply mb-1.5 block text-sm font-semibold text-ink;
+	}
+	.field-error {
+		@apply mt-1.5 text-sm font-medium text-danger-ink;
+	}
+	.chip {
+		@apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+	}
+	.container-page {
+		@apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+	}
+}
